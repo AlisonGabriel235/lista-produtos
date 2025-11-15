@@ -1,0 +1,28 @@
+name: Keep Render App Alive
+
+on:
+  schedule:
+    # Executa a cada 14 minutos (antes do Render hibernar em 15min)
+    - cron: '*/14 * * * *'
+  
+  # Permite executar manualmente se necessário
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Ping the website
+      run: |
+        echo "🔄 Fazendo ping no site para manter ativo..."
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://lista-produtos.onrender.com)
+        echo "📊 Status Code: $response"
+        
+        if [ $response -eq 200 ]; then
+          echo "✅ Site está online!"
+        else
+          echo "⚠️ Site retornou código: $response"
+        fi
+        
+        echo "⏰ Próximo ping em 14 minutos..."
