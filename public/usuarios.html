@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerenciar Usuários</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #333;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        overflow: hidden;
+    }
+
+    header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 30px;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+    }
+
+    .btn-voltar {
+        background: rgba(255,255,255, 0.2);
+        color: white;
+        border: 2px solid white;
+        padding: 10px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .btn-voltar:hover {
+        background: white;
+        color: #667eea;
+    }
+
+    main {
+        padding: 30px;
+    }
+
+    /* FORMULÁRIO */
+    .form-section {
+        background: #f5f7ff;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        border-left: 4px solid #667eea;
+    }
+
+    .form-section h2 {
+        font-size: 18px;
+        color: #667eea;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .form-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: 0.3s;
+        font-family: inherit;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .edit-note {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 15px;
+        display: none;
+        font-style: italic;
+    }
+
+    .btn-add {
+        background: #667eea;
+        color: white;
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s;
+    }
+
+    .btn-add:hover {
+        background: #5568d9;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    /* TABELA */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead {
+        background: #f4f4f4;
+        border-bottom: 2px solid #ddd;
+    }
+
+    th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #667eea;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    td {
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    tbody tr {
+        transition: 0.2s;
+    }
+
+    tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    .btn-action {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        margin-right: 6px;
+        margin-bottom: 6px;
+        transition: all 0.2s;
+        display: inline-block;
+    }
+
+    .btn-edit {
+        background: #2196F3;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background: #1976D2;
+        transform: scale(1.05);
+    }
+
+    .btn-tipo {
+        background: #ff9800;
+        color: white;
+    }
+
+    .btn-tipo:hover {
+        background: #e68900;
+        transform: scale(1.05);
+    }
+
+    .btn-delete {
+        background: #f44336;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background: #d32f2f;
+        transform: scale(1.05);
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .badge-admin {
+        background: #667eea;
+        color: white;
+    }
+
+    .badge-func {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+    }
+
+    .empty-state h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+        header {
+            flex-direction: column;
+            text-align: center;
+            gap: 15px;
+        }
+
+        .form-group {
+            grid-template-columns: 1fr;
+        }
+
+        main {
+            padding: 15px;
+        }
+
+        .btn-action {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+    }
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>👥 Gerenciar Usuários</h1>
+        <button class="btn-voltar" onclick="window.location.href='/index.html'">⬅ Voltar</button>
+    </header>
+
+    <main>
+
+        <!-- FORMULÁRIO -->
+        <div class="form-section">
+            <h2 id="formTitle">Adicionar Novo Usuário</h2>
+            <div class="form-group">
+                <input id="novoUsuario" type="text" placeholder="Nome do usuário" autocomplete="off">
+                <input id="novaSenha" type="password" placeholder="Senha">
+            </div>
+            <div class="edit-note" id="editNote">💡 Deixe a senha em branco para manter a atual</div>
+            <button class="btn-add" id="btnSalvarUser" onclick="adicionar()">➕ Adicionar Usuário</button>
+        </div>
+
+        <!-- TABELA -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>👤 Usuário</th>
+                        <th>🎯 Tipo</th>
+                        <th>⚙️ Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="lista"></tbody>
+            </table>
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+// ========================
+// ⚠️ BLOQUEIO DE ACESSO
+// ========================
+if (localStorage.getItem("logado") !== "sim") {
+    window.location = "/login.html";
+}
+
+if (localStorage.getItem("tipo") !== "admin") {
+    alert("❌ Acesso permitido somente para administradores.");
+    window.location = "/index.html";
+}
+
+// ========================
+// CARREGAR LISTA
+// ========================
+async function carregar() {
+    const r = await fetch("/usuarios", { headers: { 'x-tipo': localStorage.getItem('tipo') } });
+    const dados = await r.json();
+    window.usuariosLista = dados || [];
+    mostrar(dados);
+}
+
+function mostrar(lista) {
+    const tbody = document.getElementById("lista");
+    tbody.innerHTML = "";
+
+    if (lista.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" class="empty-state">
+                    <h3>📭 Nenhum usuário cadastrado</h3>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    const usuarioLogado = localStorage.getItem("usuario");
+
+    lista.forEach(u => {
+        const tipoClass = u.tipo === 'admin' ? 'badge-admin' : 'badge-func';
+        const tipoTexto = u.tipo === 'admin' ? 'Administrador' : 'Funcionário';
+        
+        tbody.innerHTML += `
+            <tr>
+                <td><strong>${u.usuario}</strong></td>
+                <td><span class="badge ${tipoClass}">${tipoTexto}</span></td>
+                <td>
+                    <button class="btn-action btn-edit" onclick="editar(${u.id})">✏️ Editar</button>
+                    <button class="btn-action btn-tipo" onclick="trocarTipo(${u.id})">🔄 Alterar Tipo</button>
+                    ${
+                        u.usuario !== usuarioLogado
+                        ? `<button class="btn-action btn-delete" onclick="excluir(${u.id})">🗑 Excluir</button>`
+                        : `<span style="color: #999; font-size: 12px;">Seu usuário</span>`
+                    }
+                </td>
+            </tr>
+        `;
+    });
+}
+
+// ========================
+// ADICIONAR USUÁRIO
+// ========================
+let editId = null;
+
+async function adicionar() {
+    const usuario = novoUsuario.value.trim();
+    const senha = novaSenha.value.trim();
+
+    if (!usuario) {
+        alert("Preencha o nome do usuário!");
+        return;
+    }
+
+    // se editId estiver setado, faz PUT parcial (senha opcional)
+    if (editId) {
+        const body = { usuario };
+        if (senha) body.senha = senha;
+        const r = await fetch('/usuarios/' + editId, { 
+            method: 'PUT', 
+            headers: { 
+                'Content-Type': 'application/json', 
+                'x-tipo': localStorage.getItem('tipo') 
+            }, 
+            body: JSON.stringify(body) 
+        });
+        const j = await r.json();
+        if (!j.ok) {
+            alert('❌ Erro ao editar usuário: ' + (j.erro||''));
+            return;
+        }
+        // reset form
+        editId = null;
+        document.getElementById('editNote').style.display = 'none';
+        document.getElementById('formTitle').textContent = 'Adicionar Novo Usuário';
+        document.getElementById('btnSalvarUser').textContent = '➕ Adicionar Usuário';
+        novoUsuario.value = '';
+        novaSenha.value = '';
+        carregar();
+        return;
+    }
+
+    // criação: por padrão tipo = func
+    const r = await fetch("/usuarios", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json", 
+            'x-tipo': localStorage.getItem('tipo')
+        },
+        body: JSON.stringify({ usuario, senha, tipo: 'func' })
+    });
+
+    const j = await r.json();
+    if (!j.ok) {
+        alert('❌ Erro ao cadastrar usuário: ' + (j.erro||''));
+        return;
+    }
+    
+    alert('✅ Usuário cadastrado com sucesso!');
+    novoUsuario.value = '';
+    novaSenha.value = '';
+    carregar();
+}
+
+function editar(id) {
+    const ulist = window.usuariosLista || [];
+    const user = ulist.find(x => x.id === id);
+    if (!user) return alert('Usuário não encontrado');
+    
+    editId = id;
+    document.getElementById('novoUsuario').value = user.usuario;
+    document.getElementById('novaSenha').value = '';
+    document.getElementById('editNote').style.display = 'block';
+    document.getElementById('formTitle').textContent = 'Editar Usuário';
+    document.getElementById('btnSalvarUser').textContent = '✏️ Atualizar Usuário';
+    novoUsuario.focus();
+}
+
+// ========================
+// ALTERAR TIPO
+// ========================
+async function trocarTipo(id) {
+    const tipoEscolhido = prompt('Digite o tipo:\n\n• admin (Administrador)\n• func (Funcionário)\n\nDeixe em branco para alternar:');
+    
+    if (tipoEscolhido === null) return; // cancelado
+    
+    const body = tipoEscolhido.trim() ? { tipo: tipoEscolhido.trim() } : null;
+    const r = await fetch(`/usuarios/tipo/${id}`, { 
+        method: "PUT", 
+        headers: { 
+            'Content-Type':'application/json', 
+            'x-tipo': localStorage.getItem('tipo') 
+        }, 
+        body: body ? JSON.stringify(body) : null 
+    });
+    const j = await r.json();
+    if (!j.ok) {
+        alert('❌ Erro ao alterar tipo: ' + (j.erro||''));
+        return;
+    }
+    alert('✅ Tipo alterado com sucesso!');
+    carregar();
+}
+
+// ========================
+// EXCLUIR USUÁRIO
+// ========================
+async function excluir(id) {
+    if (!confirm("⚠️ Tem certeza que deseja EXCLUIR este usuário? Esta ação não pode ser desfeita!")) return;
+    const r = await fetch(`/usuarios/${id}`, { 
+        method: "DELETE", 
+        headers: { 'x-tipo': localStorage.getItem('tipo') } 
+    });
+    const j = await r.json();
+    if (!j.ok) {
+        alert('❌ Erro ao excluir: ' + (j.erro||''));
+        return;
+    }
+    alert('✅ Usuário excluído com sucesso!');
+    carregar();
+}
+
+carregar();
+</script>
+
+</body>
+</html>

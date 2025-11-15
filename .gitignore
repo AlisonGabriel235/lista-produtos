@@ -1,0 +1,9 @@
+node_modules/
+banco.db
+.env
+.DS_Store
+thumbs.db
+npm-debug.log*
+.vscode/
+dist/
+coverage/

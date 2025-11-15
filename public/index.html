@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerenciar Produtos</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 25px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid rgba(255,255,255,0.1);
+}
+
+header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-header {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.btn-back {
+    background: rgba(255,255,255, 0.2);
+    color: white;
+    border: 2px solid white;
+}
+
+.btn-back:hover {
+    background: white;
+    color: #667eea;
+}
+
+.btn-logout {
+    background: #f44336;
+    color: white;
+    border: none;
+}
+
+.btn-logout:hover {
+    background: #d32f2f;
+}
+
+main {
+    padding: 30px;
+}
+
+/* FORMULÁRIO */
+.form-section {
+    background: #f5f7ff;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border-left: 4px solid #667eea;
+}
+
+.form-section h2 {
+    font-size: 18px;
+    color: #667eea;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.form-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="number"] {
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.3s;
+    font-family: inherit;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-save {
+    background: #667eea;
+    color: white;
+}
+
+.btn-save:hover {
+    background: #5568d9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-cancel {
+    background: #f44336;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #d32f2f;
+}
+
+/* BUSCA */
+.search-section {
+    background: #f9fafb;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.search-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 auto;
+}
+
+.search-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef4ff;
+    border: 1px solid #dbe8ff;
+    color: #334e92;
+    cursor: pointer;
+}
+
+.icon-btn:hover { background: #e2ebff; }
+
+#search {
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.btn-search {
+    background: #2196F3;
+    color: white;
+    padding: 10px 18px;
+}
+
+.btn-search:hover {
+    background: #1976D2;
+}
+
+.btn-danger {
+    background: #f44336;
+    color: white;
+    padding: 10px 18px;
+}
+
+.btn-danger:hover {
+    background: #d32f2f;
+}
+
+/* TABELA */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f4f4f4;
+    border-bottom: 2px solid #ddd;
+}
+
+th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #667eea;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+th:hover {
+    background: #e8e8e8;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+tbody tr {
+    transition: 0.2s;
+}
+
+tbody tr:hover {
+    background: #f9fafb;
+}
+
+.btn-action {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: 8px;
+    transition: all 0.2s;
+}
+
+.btn-edit {
+    background: #2196F3;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #1976D2;
+    transform: scale(1.05);
+}
+
+.btn-delete {
+    background: #f44336;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #d32f2f;
+    transform: scale(1.05);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .search-section {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group {
+        grid-template-columns: 1fr;
+    }
+
+    main {
+        padding: 15px;
+    }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+}
+
+.empty-state h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+
+<!-- jsPDF (cliente) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+// BLOQUEIO DE LOGIN
+if (localStorage.getItem("logado") !== "sim") {
+    window.location.href = "/login.html";
+}
+</script>
+
+<div class="container">
+
+    <header>
+        <h1>📦 Gerenciar Produtos</h1>
+        <div class="header-buttons">
+            <button class="btn-header btn-back" onclick="voltarHome()">⬅ Dashboard</button>
+            <button class="btn-header btn-logout" onclick="logout()">Sair</button>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- FORMULÁRIO DE PRODUTOS -->
+        <div class="form-section">
+            <h2>Adicionar/Editar Produto</h2>
+            <div class="form-group">
+                <input id="nome" type="text" placeholder="Nome do produto" autocomplete="off">
+                <input id="preco" type="number" placeholder="Preço" step="0.01" min="0">
+                <input id="quantidade" type="number" placeholder="Quantidade" min="0" autocomplete="off">
+            </div>
+
+            <div class="button-group">
+                <button class="btn-save" id="btnSalvar" onclick="salvar()">💾 Salvar Produto</button>
+                <button class="btn-cancel" id="btnCancelar" onclick="cancelarEdicao()" style="display:none;">✕ Cancelar</button>
+            </div>
+        </div>
+
+        <!-- BUSCA E AÇÕES -->
+        <div class="search-section">
+            <div class="search-left">
+                <input id="search" placeholder="🔍 Pesquisar por nome..." oninput="buscar()">
+                <button class="btn-search" onclick="limparBusca()">Limpar</button>
+                <button class="btn-search" onclick="carregar()">Atualizar</button>
+            </div>
+            <div class="search-right">
+                <button title="Exportar CSV" class="icon-btn" onclick="exportCSVClient()">📥</button>
+                <button title="Exportar PDF" class="icon-btn" onclick="exportPDFClient()">📄</button>
+                <button title="Limpar tudo" class="icon-btn" onclick="excluirTudo()">🗑</button>
+            </div>
+        </div>
+
+        <!-- TABELA -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th onclick="ordenar('nome')">Nome 📝</th>
+                        <th onclick="ordenar('preco')">Preço 💵</th>
+                        <th onclick="ordenar('quantidade')">Quantidade 📊</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="lista"></tbody>
+            </table>
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+let editando = null;
+let dadosOriginal = [];
+let sortField = "nome";
+let sortDir = 1;
+
+// Carregar
+async function carregar() {
+    const r = await fetch("/produtos");
+    const dados = await r.json();
+    dadosOriginal = dados;
+    aplicarFiltroOrdenacao();
+}
+
+// Salvar
+async function salvar() {
+    const nome = nomeInput.value.trim();
+    const preco = precoInput.value;
+    const quantidade = quantidadeInput.value;
+
+    if (!nome) {
+        alert("Preencha o nome do produto!");
+        return;
+    }
+
+    if (editando === null) {
+        await fetch("/produtos", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ nome, preco: parseFloat(preco), quantidade: parseInt(quantidade) || 0 })
+        });
+    } else {
+        await fetch("/produtos/" + editando, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ nome, preco: parseFloat(preco), quantidade: parseInt(quantidade) || 0 })
+        });
+
+        editando = null;
+        btnSalvar.textContent = "💾 Salvar Produto";
+        btnCancelar.style.display = "none";
+    }
+
+    limparCampos();
+    carregar();
+}
+
+// Editar
+function editar(id, nome, preco, quantidade) {
+    nomeInput.value = nome;
+    precoInput.value = preco;
+    quantidadeInput.value = quantidade;
+
+    editando = id;
+    btnSalvar.textContent = "✏️ Atualizar Produto";
+    btnCancelar.style.display = "inline-block";
+    nomeInput.focus();
+}
+
+// Cancelar
+function cancelarEdicao() {
+    editando = null;
+    btnSalvar.textContent = "💾 Salvar Produto";
+    btnCancelar.style.display = "none";
+    limparCampos();
+}
+
+// Excluir
+async function excluir(id) {
+    if (!confirm("Tem certeza que deseja excluir?")) return;
+    await fetch("/produtos/" + id, { method: "DELETE" });
+    carregar();
+}
+
+// Excluir tudo
+async function excluirTudo() {
+    if (!confirm("⚠️ Tem certeza que deseja LIMPAR TUDO? Esta ação não pode ser desfeita!")) return;
+    await fetch("/produtos", { method: "DELETE" });
+    carregar();
+}
+
+// Filtros e ordenação
+function buscar() {
+    aplicarFiltroOrdenacao();
+}
+
+function limparBusca() {
+    search.value = "";
+    aplicarFiltroOrdenacao();
+}
+
+function ordenar(campo) {
+    if (sortField === campo) sortDir = -sortDir;
+    else { sortField = campo; sortDir = 1; }
+
+    aplicarFiltroOrdenacao();
+}
+
+function aplicarFiltroOrdenacao() {
+    let lista = [...dadosOriginal];
+
+    const termo = search.value.toLowerCase();
+    if (termo) lista = lista.filter(p => p.nome.toLowerCase().includes(termo));
+
+    lista.sort((a, b) => {
+        let aVal = a[sortField];
+        let bVal = b[sortField];
+        
+        if (aVal < bVal) return -1 * sortDir;
+        if (aVal > bVal) return 1 * sortDir;
+        return 0;
+    });
+
+    exibirTabela(lista);
+}
+
+function exibirTabela(lista) {
+    const tbody = document.getElementById("lista");
+    tbody.innerHTML = "";
+
+    if (lista.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="empty-state">
+                    <h3>📭 Nenhum produto encontrado</h3>
+                    <p>Adicione o primeiro produto usando o formulário acima!</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    lista.forEach(p => {
+        tbody.innerHTML += `
+            <tr>
+                <td><strong>${p.nome}</strong></td>
+                <td>R$ ${Number(p.preco).toFixed(2).replace(".", ",")}</td>
+                <td>${p.quantidade} un</td>
+                <td>
+                    <button class="btn-action btn-edit" onclick="editar(${p.id}, '${p.nome.replace(/'/g, "\\'")}', ${p.preco}, ${p.quantidade})">✏️ Editar</button>
+                    <button class="btn-action btn-delete" onclick="excluir(${p.id})">🗑 Excluir</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+// Util
+function limparCampos() {
+    nomeInput.value = "";
+    precoInput.value = "";
+    quantidadeInput.value = "";
+}
+
+// ========================
+// EXPORTAÇÃO CLIENTE
+// ========================
+async function exportCSVClient() {
+    try {
+        const r = await fetch('/produtos');
+        const produtos = await r.json();
+
+        const headers = ['id','nome','preco','unidade','quantidade'];
+        const lines = [headers.join(',')];
+
+        produtos.forEach(p => {
+            const row = [
+                p.id,
+                '"' + String(p.nome || '').replace(/"/g, '""') + '"',
+                p.preco != null ? p.preco : '',
+                '"' + String(p.unidade || '').replace(/"/g, '""') + '"',
+                p.quantidade != null ? p.quantidade : ''
+            ];
+            lines.push(row.join(','));
+        });
+
+        const csv = lines.join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'produtos.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        console.warn('CSV cliente falhou, tentando fallback servidor:', err);
+        // fallback: baixar do servidor
+        window.location.href = '/produtos/export.csv';
+    }
+}
+
+async function exportPDFClient() {
+    try {
+        const r = await fetch('/produtos');
+        const produtos = await r.json();
+        if (window.jspdf && window.jspdf.jsPDF) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(16);
+            doc.text('Lista de Produtos', 14, 20);
+            doc.setFontSize(10);
+
+            let y = 30;
+            doc.text('ID', 14, y);
+            doc.text('Nome', 30, y);
+            doc.text('Preço', 140, y);
+            doc.text('Qtd', 170, y);
+            doc.text('Unid', 190, y);
+            y += 6;
+
+            produtos.forEach(p => {
+                if (y > 280) { doc.addPage(); y = 20; }
+                doc.text(String(p.id), 14, y);
+                doc.text(String(p.nome || ''), 30, y, { maxWidth: 100 });
+                doc.text(p.preco != null ? ('R$ ' + Number(p.preco).toFixed(2)) : '', 140, y);
+                doc.text(String(p.quantidade != null ? p.quantidade : ''), 170, y);
+                doc.text(String(p.unidade || ''), 190, y);
+                y += 8;
+            });
+
+            doc.save('produtos.pdf');
+            return;
+        }
+
+        // fallback: solicitar PDF gerado pelo servidor e forçar download
+        const resp = await fetch('/produtos/export.pdf');
+        if (!resp.ok) throw new Error('Erro ao gerar PDF no servidor');
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'produtos.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        alert('Erro ao exportar PDF: ' + err.message);
+    }
+}
+
+// VOLTAR PARA HOME
+function voltarHome() {
+    window.location.href = "/home.html";
+}
+
+// LOGOUT
+function logout() {
+    localStorage.removeItem("logado");
+    localStorage.removeItem("tipo");
+    localStorage.removeItem("usuario");
+    window.location.href = "/login.html";
+}
+
+const nomeInput = document.getElementById("nome");
+const precoInput = document.getElementById("preco");
+const quantidadeInput = document.getElementById("quantidade");
+
+carregar();
+</script>
+
+</body>
+</html>

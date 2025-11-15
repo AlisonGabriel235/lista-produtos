@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Sistema de Produtos</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        overflow: hidden;
+    }
+
+    /* HEADER */
+    header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 40px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 15px;
+    }
+
+    .logout {
+        padding: 10px 20px;
+        background: rgba(255,255,255, 0.2);
+        color: white;
+        border: 2px solid white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .logout:hover {
+        background: white;
+        color: #667eea;
+    }
+
+    /* MAIN CONTENT */
+    main {
+        padding: 40px 30px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .card {
+        background: linear-gradient(135deg, #f5f7ff 0%, #e8ebff 100%);
+        border-radius: 16px;
+        padding: 25px;
+        border: 2px solid transparent;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+    }
+
+    .card-title {
+        font-size: 13px;
+        color: #888;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+
+    .card-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #667eea;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Card clicável */
+    .clickable {
+        cursor: pointer;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-align: center;
+        padding: 30px 25px;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .clickable::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255, 0.1);
+        transition: 0.3s;
+    }
+
+    .clickable:hover::before {
+        left: 100%;
+    }
+
+    .clickable .card-title {
+        color: rgba(255,255,255, 0.7);
+    }
+
+    .clickable .card-value {
+        color: white;
+        justify-content: center;
+        font-size: 22px;
+    }
+
+    /* LIST BOX */
+    .list-box {
+        background: #f9fafb;
+        padding: 30px;
+        border-radius: 16px;
+        border-left: 5px solid #667eea;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .list-box h2 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 18px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .low-item {
+        margin: 12px 0;
+        padding: 10px;
+        background: white;
+        border-radius: 8px;
+        border-left: 3px solid #ff9800;
+        font-size: 16px;
+        color: #444;
+    }
+
+    .low-item strong {
+        color: #667eea;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        header {
+            flex-direction: column;
+            text-align: center;
+            gap: 15px;
+        }
+
+        header h1 {
+            font-size: 24px;
+        }
+
+        .grid {
+            grid-template-columns: 1fr;
+        }
+
+        main {
+            padding: 20px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<script>
+// BLOQUEIO DE LOGIN
+if (localStorage.getItem("logado") !== "sim") {
+    window.location.href = "/login.html";
+}
+
+// Mostrar nome do usuário
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById("nomeUsuario").textContent = localStorage.getItem("usuario") || "Usuário";
+    
+    // Mostrar card de usuários SOMENTE se o usuário logado for admin
+    const tipoLocal = localStorage.getItem("tipo");
+    const usuarioLocal = localStorage.getItem("usuario");
+    if (tipoLocal === "admin" || usuarioLocal === "admin") {
+        document.getElementById("cardUsuarios").style.display = "block";
+    }
+    
+    // Carregar dados
+    carregarDados();
+});
+
+async function carregarDados() {
+    try {
+        const r = await fetch("/produtos");
+        const produtos = await r.json();
+
+        // Total de produtos
+        document.getElementById("totalProdutos").innerText = produtos.length;
+
+        // Quantidade total
+        let totalEstoque = produtos.reduce((sum, p) => sum + (p.quantidade || 0), 0);
+        document.getElementById("estoqueTotal").innerText = totalEstoque + " un";
+
+        // Valor total
+        let valor = produtos.reduce((sum, p) => sum + (p.preco * (p.quantidade || 0)), 0);
+        document.getElementById("valorTotal").innerText = "R$ " + valor.toFixed(2).replace(".", ",");
+
+        // Produto mais caro
+        if (produtos.length > 0) {
+            let caro = produtos.reduce((a, b) => (a.preco > b.preco ? a : b));
+            document.getElementById("produtoCaro").innerText = caro.nome;
+        }
+
+        // Lista de baixo estoque
+        let baixo = produtos
+            .filter(p => p.quantidade < 5)
+            .sort((a, b) => a.quantidade - b.quantidade)
+            .slice(0, 10);
+
+        let html = "";
+        if (baixo.length === 0) {
+            html = "<p style='color: #888;'>✅ Nenhum produto com baixo estoque</p>";
+        } else {
+            baixo.forEach(p => {
+                html += `<div class="low-item">
+                    <strong>${p.nome}</strong> — ${p.quantidade} unidades em estoque
+                </div>`;
+            });
+        }
+
+        document.getElementById("listaBaixo").innerHTML = html;
+    } catch (error) {
+        console.error("❌ Erro ao carregar dados:", error);
+    }
+}
+
+function irParaProdutos() {
+    window.location.href = "/index.html";
+}
+
+function irParaUsuarios() {
+    window.location.href = "/usuarios.html";
+}
+
+function logout() {
+    localStorage.removeItem("logado");
+    localStorage.removeItem("tipo");
+    localStorage.removeItem("usuario");
+    window.location.href = "/login.html";
+}
+</script>
+
+<div class="container">
+
+    <header>
+        <h1>📊 Dashboard</h1>
+        <div class="user-info">
+            <span>👤 <strong id="nomeUsuario">Admin</strong></span>
+            <button class="logout" onclick="logout()">Sair</button>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- CARDS ESTATÍSTICOS -->
+        <div class="grid">
+
+            <div class="card">
+                <div class="card-title">Total de Produtos</div>
+                <div class="card-value">
+                    <span>📦</span>
+                    <span id="totalProdutos">0</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Estoque Total</div>
+                <div class="card-value">
+                    <span>📈</span>
+                    <span id="estoqueTotal">0</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Valor Total</div>
+                <div class="card-value">
+                    <span>💰</span>
+                    <span id="valorTotal">R$ 0</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Mais Caro</div>
+                <div class="card-value">
+                    <span>⭐</span>
+                    <span id="produtoCaro">-</span>
+                </div>
+            </div>
+
+            <!-- CARD "GERENCIAR PRODUTOS" -->
+            <div class="card clickable" onclick="irParaProdutos()">
+                <div class="card-title">Ação</div>
+                <div class="card-value">
+                    📦 Gerenciar Produtos
+                </div>
+            </div>
+
+            <!-- CARD "GERENCIAR USUÁRIOS" (SOMENTE ADMIN) -->
+            <div id="cardUsuarios" class="card clickable" onclick="irParaUsuarios()" style="display:none;">
+                <div class="card-title">Administração</div>
+                <div class="card-value">
+                    👥 Gerenciar Usuários
+                </div>
+            </div>
+
+        </div>
+
+        <!-- LISTA DE BAIXO ESTOQUE -->
+        <div class="list-box">
+            <h2>🔻 Produtos com Baixo Estoque</h2>
+            <div id="listaBaixo"></div>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
