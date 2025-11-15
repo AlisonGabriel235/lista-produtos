@@ -1,35 +1,43 @@
----
+# Lista de Produtos
 
-Observação importante: O repositório remoto foi criado com sucesso em:
+Aplicação simples de gerenciamento de produtos (frontend estático + servidor Node/Express + SQLite local).
 
-`https://github.com/AlisonGabriel235/lista-produtos`
+Funcionalidades principais:
+- CRUD de produtos (nome, preço, quantidade, unidade)
+- Autenticação simples de usuário (admin/func)
+- Exportação CSV/PDF
 
-Eu tentei dar push do código automaticamente, mas o comando `git` não está disponível neste ambiente, então não consegui completar o push. Para enviar o código do seu computador local, execute os comandos abaixo no diretório do projeto.
+Como rodar localmente
 
-```powershell
-# (1) Inicializar git e commitar
-git init
-git add .
-git commit -m "Initial commit"
-
-# (2) Adicionar remote (URL sem token)
-git remote add origin https://github.com/AlisonGabriel235/lista-produtos.git
-
-# (3) Subir para o GitHub
-git branch -M main
-git push -u origin main
-```
-
-Se você preferir, pode inserir temporariamente o token no remote para subir sem inserir credenciais interativas (não recomendado para uso contínuo):
+1. Instale dependências:
 
 ```powershell
-git remote set-url origin https://<SEU_TOKEN>@github.com/AlisonGabriel235/lista-produtos.git
-git push -u origin main
-# depois remova o token da URL
-git remote set-url origin https://github.com/AlisonGabriel235/lista-produtos.git
+npm install
 ```
 
-Depois de confirmar que o push foi realizado com sucesso, recomendo revogar o PAT que você gerou (Settings → Developer settings → Personal access tokens) para segurança.
+2. Inicie o servidor:
+
+```powershell
+npm start
+# ou
+node server.js
+```
+
+3. Abra no navegador:
+
+http://localhost:3000
+
+Notas importantes
+- O projeto usa SQLite (`banco.db`) como armazenamento local. Em ambientes de produção prefira um banco remoto (Postgres) ou um volume persistente.
+- Não comite arquivos sensíveis (já existe `.gitignore` que exclui `node_modules` e `banco.db`).
+
+Deploy
+- Há um `Dockerfile` e `Procfile` no repositório. Para deploy rápido, pode usar serviços como Render ou Railway; para produção com persistência, use um VPS ou configure um volume persistente.
+
+Contato
+- Autor: AlisonGabriel235
+
+Se quiser, eu atualizo este README com instruções específicas de deploy (Render / DigitalOcean) ou adiciono um arquivo `deploy.md` com passos automáticos. Basta pedir.
 # Lista de Produtos — Deploy
 
 Este repositório contém um pequeno app Node.js + Express que usa SQLite para persistência (arquivo `banco.db`). Abaixo as instruções para subir o projeto na internet.
@@ -116,4 +124,5 @@ Posso preparar tudo (adicionar `start`, `Procfile`, `Dockerfile`) — já adicio
 
 ---
 
-Se quiser que eu: 
+ 
+
