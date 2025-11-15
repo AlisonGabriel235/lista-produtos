@@ -4,6 +4,12 @@ const path = require("path");
 
 const app = express();
 app.use(express.json());
+
+// Redirecionar todas as requisições da raiz para a página de login
+app.get("/", (req, res) => {
+    res.redirect("/login.html");
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 // ------------------------------------------
